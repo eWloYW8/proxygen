@@ -1,6 +1,7 @@
 # app/api/v2/endpoints/profiles.py
 
 import logging
+import yaml
 from fastapi import APIRouter, Query, HTTPException, Response, Depends
 from typing import List, Optional
 
@@ -17,21 +18,24 @@ async def verify_api_key(api_key: Optional[str] = Query(None)):
             raise HTTPException(status_code=403, detail="Invalid API Key")
 
 @router.get("/")
-async def get_profiles(response: Response,
-                       name: List[str] = Query(...),
+async def get_profiles(name: List[str] = Query(...),
                        profile_service: ProfileService = Depends(ProfileService),
                        _: None = Depends(verify_api_key)):
     full_config, sub_info = await profile_service.generate_multiple_profiles_with_config(name)
     
     logger.debug(f"Get sub_info for profiles {name}: {sub_info}")
 
-    response.headers["Content-Disposition"] = f"inline; filename={name[0]}"
+    headers = {"Content-Disposition": f"inline; filename={name[0]}.yaml"}
     if "upload" in sub_info and "expire" in sub_info:
-        response.headers["subscription-userinfo"] = (
+        headers["subscription-userinfo"] = (
             f"upload={sub_info['upload']}; download={sub_info['download']}; total={sub_info['total']}; expire={sub_info.get('expire', '0')}"
         )
 
-    return full_config
+    return Response(
+        content=yaml.safe_dump(full_config, sort_keys=False, allow_unicode=True),
+        media_type="text/plain; charset=utf-8",
+        headers=headers
+    )
 
 @router.put("/{profile}")
 async def update_profile(profile: str, 
