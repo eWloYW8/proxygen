@@ -1,0 +1,64 @@
+rule-providers:
+  SCT:
+    type: file
+    path: "./lists/SCT.list"
+  ZJU:
+    type: file
+    path: "./lists/ZJU.list"
+  Scholar:
+    type: file
+    path: "./lists/scholar.list"
+  Apple:
+    type: file
+    path: "./lists/Apple.list"
+  LocalAreaNetwork:
+    type: file
+    path: "./lists/LocalAreaNetwork.list"
+  China:
+    type: file
+    path: "./lists/China.list"
+  ChinaDomain:
+    type: file
+    path: "./lists/ChinaDomain.list"
+  Bans:
+    type: file
+    path: "./lists/bans.list"
+  AIS:
+    type: file
+    path: "./lists/ais.list"
+  Netflix:
+    type: file
+    path: "./lists/Netflix.list"
+  ProxyGFWlist:
+    type: file
+    path: "./lists/ProxyGFWlist.list"
+
+rules:
+  # ZJUSCT (超算队内网)
+  - RULE-SET,SCT,超算队内网
+
+  # ZJU (浙大校网)
+  - RULE-SET,ZJU,浙大校网
+
+  # Scholar websites (学术网站)
+  - RULE-SET,Scholar,学术网站
+
+  # Apple Services
+  - RULE-SET,Apple,苹果服务
+
+  # DIRECT - LAN & China
+  - RULE-SET,LocalAreaNetwork,DIRECT
+  - GEOIP,CN,DIRECT
+  - RULE-SET,China,DIRECT
+  - RULE-SET,ChinaDomain,DIRECT
+
+  # REJECT (广告/屏蔽)
+  - RULE-SET,Bans,REJECT
+
+  # PROXY (AI, Netflix, GFWList)
+  - RULE-SET,AIS,PROXY
+  - RULE-SET,Netflix,PROXY
+  - RULE-SET,ProxyGFWlist,PROXY
+
+  # FALLBACK (兜底规则)
+  - MATCH,FALLBACK

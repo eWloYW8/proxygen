@@ -1,0 +1,12 @@
+services:
+  proxygen:
+    image: proxygen:latest
+    container_name: proxygen
+    ports:
+      - "25503:8000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+    environment:
+      - API_KEY=${API_KEY} # Configure your API key in the .env file
+    build: .

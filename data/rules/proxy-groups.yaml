@@ -1,0 +1,97 @@
+proxy-groups:
+  - name: PROXY
+    type: select
+    proxies:
+      - 🇺🇲 美国节点
+      - 🇯🇵 日本节点
+      - 🇪🇺 欧洲节点
+      - 🇭🇰 香港节点
+      - 🇸🇬 新加坡节点
+      - 🇹🇼 台湾节点
+
+  - name: 超算队内网
+    type: select
+    url: http://172.25.2.207/
+    removable: true
+    proxies:
+      - DIRECT
+      - ZJUSCT HTTPS
+      - ZJUSCT TROJAN
+
+  - name: 浙大校网
+    removable: true
+    type: select
+    url: http://cc98.org/
+    proxies:
+      - DIRECT
+      - 超算队内网
+
+  - name: 学术网站
+    type: select
+    url: https://dl.acm.org
+    proxies:
+      - DIRECT
+      - 浙大校网
+      - PROXY
+
+  - name: 苹果服务
+    type: select
+    proxies:
+      - DIRECT
+      - PROXY
+      - REJECT
+
+  - name: FALLBACK
+    type: select
+    proxies:
+      - DIRECT
+      - PROXY
+      - REJECT
+
+  - name: 🇭🇰 香港节点
+    removable: true
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    tolerance: 50
+    filter: "(香港|HK|Hong Kong|hongkong)"
+
+  - name: 🇺🇲 美国节点
+    removable: true
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    tolerance: 50
+    filter: "(美|波特兰|达拉斯|俄勒冈|凤凰城|费利蒙|硅谷|拉斯维加斯|洛杉矶|圣何塞|圣克拉拉|西雅图|芝加哥|United States)"
+
+  - name: 🇸🇬 新加坡节点
+    removable: true
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    tolerance: 50
+    filter: "(新加坡|狮城|SG|Singapore)"
+
+  - name: 🇹🇼 台湾节点
+    removable: true
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    tolerance: 50
+    filter: "(台湾|TW|Taiwan)"
+
+  - name: 🇯🇵 日本节点
+    removable: true
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    tolerance: 50
+    filter: "(日本|川日|东京|大阪|泉日|埼玉|沪日|深日|[^-]日|JP|Japan)"
+
+  - name: 🇪🇺 欧洲节点
+    removable: true
+    type: url-test
+    url: http://www.gstatic.com/generate_204
+    interval: 120
+    tolerance: 50
+    filter: "(英国|德国|荷兰|United Kingdom|Germany|Netherlands|Italy|Spain|Turkey)"

@@ -1,0 +1,6 @@
+IP-CIDR,172.25.0.0/16,no-resolve
+DOMAIN-SUFFIX,internal.zjusct.io
+
+
+DOMAIN-SUFFIX,clusters.zjusct.io
+# DOMAIN-SUFFIX,pages.zjusct.io

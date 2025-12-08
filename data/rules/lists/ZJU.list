@@ -1,0 +1,18 @@
+# ZJU 内网
+# 校内直连，校外通过内网穿透或 RVPN 访问
+
+# 域名
+DOMAIN-SUFFIX,zju.edu.cn
+DOMAIN-SUFFIX,zju6.edu.cn
+
+# CC98
+DOMAIN-KEYWORD,cc98
+
+# NexusHD
+DOMAIN-KEYWORD,nexushd
+
+# 校内 IP
+IP-CIDR,10.0.0.0/8,no-resolve
+
+# DOMAIN-SUFFIX,clusters.zjusct.io
+DOMAIN-SUFFIX,pages.zjusct.io
