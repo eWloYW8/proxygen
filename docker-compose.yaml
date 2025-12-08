@@ -8,5 +8,7 @@ services:
       - ./data:/app/data
     restart: unless-stopped
     environment:
+      - FORWARDED_ALLOW_IPS=*
+      - USE_API_KEY=TRUE
       - API_KEY=${API_KEY} # Configure your API key in the .env file
     build: .

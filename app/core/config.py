@@ -3,6 +3,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
+    USE_API_KEY: bool = True
     API_KEY: str
     PROFILE_DIR: str = "./data/profiles"
     RULES_DIR: str = "./data/rules"
