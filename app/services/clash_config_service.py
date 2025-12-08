@@ -246,5 +246,3 @@ class ClashConfigService:
             expanded_rule = f"{','.join(line_parts)},{target}{suffix}"
             expanded_rules.append(expanded_rule)
         return expanded_rules
-
-clash_config_service = ClashConfigService()

@@ -1,18 +1,20 @@
 # app/api/v2/endpoints/profiles.py
 
 import logging
-from fastapi import APIRouter, Query, HTTPException, Response
+from fastapi import APIRouter, Query, HTTPException, Response, Depends
 from typing import List
 
 from app.core.config import settings
-from app.services.profile_service import profile_service
+from app.services.profile_service import ProfileService
 
 router = APIRouter()
 
 logger = logging.getLogger(__name__)
 
 @router.get("/")
-async def get_profiles(response: Response, name: List[str] = Query(...)):
+async def get_profiles(response: Response,
+                       name: List[str] = Query(...),
+                       profile_service: ProfileService = Depends(ProfileService)):
     full_config, sub_info = await profile_service.generate_multiple_profiles_with_config(name)
     
     logger.debug(f"Get sub_info for profiles {name}: {sub_info}")
@@ -26,7 +28,9 @@ async def get_profiles(response: Response, name: List[str] = Query(...)):
     return full_config
 
 @router.put("/{profile}")
-async def update_profile(profile: str, url: str = Query(...)):
+async def update_profile(profile: str, 
+                         url: str = Query(...), 
+                         profile_service: ProfileService = Depends(ProfileService)):
     count = await profile_service.fetch_and_update_profile(profile, url)
     return {
         "status": "success",

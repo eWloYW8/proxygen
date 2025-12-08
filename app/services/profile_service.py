@@ -3,15 +3,18 @@ import logging
 import re
 from typing import List, Dict, Any, Tuple
 from datetime import datetime
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from yaml import safe_load
 
 from app.repos.profile_repo import profile_repo
-from app.services.clash_config_service import clash_config_service
+from app.services.clash_config_service import ClashConfigService
 
 logger = logging.getLogger(__name__)
 
 class ProfileService:
+    def __init__(self, clash_config_service: ClashConfigService = Depends(ClashConfigService)):
+        self.clash_config_service = clash_config_service
+
     async def generate_multiple_profiles_with_config(self, name: List[str]) -> Tuple[Dict[str, Any], Dict[str, str]]:
         logger.info(f"Generating multiple profiles: {name}")
 
@@ -38,7 +41,7 @@ class ProfileService:
                 logger.error(f"Error loading profile '{profile_name}': {e}")
                 raise HTTPException(status_code=500, detail=f"Error loading profile '{profile_name}'")
 
-        full_config = clash_config_service.add_config_to_proxies(all_proxies)
+        full_config = self.clash_config_service.add_config_to_proxies(all_proxies)
                     
         return full_config, subscription_info
 
@@ -100,5 +103,3 @@ class ProfileService:
         logger.info(f"Profile '{name}' updated with {len(proxies)} proxies")
 
         return len(proxies)
-    
-profile_service = ProfileService()
