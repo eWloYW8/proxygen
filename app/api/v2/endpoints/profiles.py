@@ -40,6 +40,7 @@ async def get_profiles(name: List[str] = Query(...),
     )
 
 @router.put("/{profile}")
+@router.get("/{profile}/update")
 async def update_profile(profile: str, 
                          url: str = Query(...), 
                          profile_service: ProfileService = Depends(ProfileService),
