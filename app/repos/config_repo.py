@@ -29,6 +29,20 @@ class ConfigRepo:
 
     def load_proxy_groups(self) -> Dict[str, Any]:
         return self._load_yaml("proxy-groups.yaml")
+    
+    def load_override_config(self, filename: str) -> Dict[str, Any]:
+        """
+        Load an override configuration file from the rules directory.
+        If extension is missing, defaults to .yaml
+        """
+        if not filename:
+            return {}
+            
+        clean_name = filename.strip()
+        if not clean_name.lower().endswith(('.yaml', '.yml')):
+            clean_name += ".yaml"
+            
+        return self._load_yaml(clean_name)
 
     def load_provider_file(self, relative_path: str) -> List[str]:
         clean_path = relative_path.strip()

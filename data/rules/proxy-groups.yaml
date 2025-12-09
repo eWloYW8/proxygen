@@ -9,6 +9,14 @@ proxy-groups:
       - 🇸🇬 新加坡节点
       - 🇹🇼 台湾节点
 
+  - name: SCTGATE
+    type: select
+    url: http://clusters.zju.edu.cn/
+    removable: true
+    proxies:
+      - DIRECT
+      - PROXY
+
   - name: 超算队内网
     type: select
     url: http://172.25.2.207/

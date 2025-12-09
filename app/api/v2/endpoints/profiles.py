@@ -19,9 +19,11 @@ async def verify_api_key(api_key: Optional[str] = Query(None)):
 
 @router.get("/")
 async def get_profiles(name: List[str] = Query(...),
-                       profile_service: ProfileService = Depends(ProfileService),
-                       _: None = Depends(verify_api_key)):
-    full_config, sub_info = await profile_service.generate_multiple_profiles_with_config(name)
+                       override: Optional[str] = Query(None),
+                       _: None = Depends(verify_api_key),
+                       profile_service: ProfileService = Depends(ProfileService)):
+
+    full_config, sub_info = await profile_service.generate_multiple_profiles_with_config(name, override)
     
     logger.debug(f"Get sub_info for profiles {name}: {sub_info}")
 

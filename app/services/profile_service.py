@@ -1,12 +1,13 @@
 import httpx
 import logging
 import re
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 from datetime import datetime
 from fastapi import HTTPException, Depends
 from yaml import safe_load
 
 from app.repos.profile_repo import profile_repo
+from app.repos.config_repo import config_repo
 from app.services.clash_config_service import ClashConfigService
 
 logger = logging.getLogger(__name__)
@@ -15,8 +16,8 @@ class ProfileService:
     def __init__(self, clash_config_service: ClashConfigService = Depends(ClashConfigService)):
         self.clash_config_service = clash_config_service
 
-    async def generate_multiple_profiles_with_config(self, name: List[str]) -> Tuple[Dict[str, Any], Dict[str, str]]:
-        logger.info(f"Generating multiple profiles: {name}")
+    async def generate_multiple_profiles_with_config(self, name: List[str], override: Optional[str] = None) -> Tuple[Dict[str, Any], Dict[str, str]]:
+        logger.info(f"Generating multiple profiles: {name} (Override: {override})")
 
         all_proxies = []
         subscription_info = {}
@@ -41,7 +42,13 @@ class ProfileService:
                 logger.error(f"Error loading profile '{profile_name}': {e}")
                 raise HTTPException(status_code=500, detail=f"Error loading profile '{profile_name}'")
 
-        full_config = self.clash_config_service.add_config_to_proxies(all_proxies)
+        override_data = {}
+        if override:
+            override_data = config_repo.load_override_config(override)
+            if not override_data:
+                logger.warning(f"Override file '{override}' provided but content is empty or file missing.")
+
+        full_config = self.clash_config_service.add_config_to_proxies(all_proxies, override_data)
                     
         return full_config, subscription_info
 
