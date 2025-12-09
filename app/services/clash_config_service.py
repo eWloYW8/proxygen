@@ -1,7 +1,6 @@
-from typing import List, Dict, Any, Set
+from typing import List, Dict, Any, Set, Optional
 import logging
 import re
-import copy
 from pydantic import ValidationError
 from app.repos.config_repo import config_repo
 from app.schemas.clash_config import ClashConfig, ProxyGroup, RuleProvider
@@ -9,29 +8,32 @@ from app.schemas.clash_config import ClashConfig, ProxyGroup, RuleProvider
 logger = logging.getLogger(__name__)
 
 class ClashConfigService:
-    def add_config_to_proxies(self, proxies: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def add_config_to_proxies(self, proxies: List[Dict[str, Any]], override_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Loads configuration from repo and generates the full Clash config.
         Parameters:
             proxies (List[Dict[str, Any]]): List of proxy configurations.
+            override_data (Optional[Dict[str, Any]]): Additional config to merge/override.
         Returns:
             Dict[str, Any]: The complete Clash configuration dictionary.
         """
         pg_data = config_repo.load_proxy_groups()
         rules = config_repo.load_rules()
         
-        return self.generate_config(proxies, pg_data, rules)
+        return self.generate_config(proxies, pg_data, rules, override_data)
     
     def generate_config(self, 
                         proxies: List[Dict[str, Any]], 
                         proxy_groups_data: Dict[str, Any], 
-                        rules_data: Dict[str, Any]) -> Dict[str, Any]:
+                        rules_data: Dict[str, Any],
+                        override_data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Generates the Clash config structure by processing groups and rules.
         Parameters:
             proxies (List[Dict[str, Any]]): List of proxy configurations.
             proxy_groups_data (Dict[str, Any]): Raw proxy groups configuration.
             rules_data (Dict[str, Any]): Raw rules configuration.
+            override_data (Optional[Dict[str, Any]]): Additional config to merge/override.
         Returns:
             Dict[str, Any]: The complete Clash configuration dictionary.
         """
@@ -47,7 +49,7 @@ class ClashConfigService:
         # 2. Process Rules
         group_names = set(g.get("name") for g in processed_groups if "name" in g)
         built_ins = {"DIRECT", "REJECT", "NO-HYDRA"}
-        valid_targets = proxy_names_set.union(group_names).union(built_ins) # Valid targets for rules include proxies, groups, and built-ins
+        valid_targets = proxy_names_set.union(group_names).union(built_ins)
         processed_rules = self._process_rules(rules_data, valid_targets)
 
         config = ClashConfig(
@@ -61,7 +63,13 @@ class ClashConfigService:
             rules=processed_rules
         )
 
-        return config.model_dump(by_alias=True, exclude_none=True)
+        final_config = config.model_dump(by_alias=True, exclude_none=True)
+
+        if override_data:
+            logger.info(f"Applying override configuration (keys: {list(override_data.keys())})")
+            final_config.update(override_data)
+
+        return final_config
 
     def _process_groups(self, 
                         raw_groups: List[Dict[str, Any]], 
