@@ -1,0 +1,10 @@
+tun:
+  auto-detect-interface: true
+  auto-route: true
+  device: Mihomo
+  dns-hijack:
+  - any:53
+  mtu: 1440
+  stack: gvisor
+  strict-route: false
+  enable: true

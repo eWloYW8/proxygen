@@ -1,4 +1,7 @@
 rule-providers:
+  SCTGATE:
+    type: file
+    path: "./lists/SCTGATE.list"
   SCT:
     type: file
     path: "./lists/SCT.list"
@@ -34,6 +37,9 @@ rule-providers:
     path: "./lists/ProxyGFWlist.list"
 
 rules:
+  # SCTGATE
+  - RULE-SET,SCTGATE,SCTGATE
+
   # ZJUSCT (超算队内网)
   - RULE-SET,SCT,超算队内网
 

@@ -1,0 +1,6 @@
+external-controller: '127.0.0.1:19097'
+external-controller-cors:
+  allow-origins:
+    - '*'
+  allow-private-network: true
+secret: set-your-secret-here
